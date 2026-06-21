@@ -38,19 +38,19 @@ jobs:
   # The job below is an explicit deploy trigger using Railway CLI as an alternative.
   # Uncomment and configure once you have a Railway project set up.
   #
-  # deploy:
-  #   name: Deploy to Railway
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #
-  #     - name: Install Railway CLI
-  #       run: npm install -g @railway/cli
-  #
-  #     - name: Deploy to Railway
-  #       run: railway up --service=server
-  #       env:
-  #         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy:
+    name: Deploy to Railway
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+  
+    steps:
+      - uses: actions/checkout@v4
+  
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+  
+      - name: Deploy to Railway
+        run: railway up --service=server
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
