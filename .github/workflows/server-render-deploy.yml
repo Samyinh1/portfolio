@@ -1,0 +1,71 @@
+name: Server — Build & Deploy (Render)
+
+# Triggers only when server-side code changes in the monorepo.
+# Render is connected to this repo via its dashboard; the deploy job
+# fires Render's Deploy Hook so the service redeploys on every push to main.
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'server/**'
+      - '.github/workflows/server-render-deploy.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'server/**'
+
+jobs:
+  # ── CI — validate before deploying ─────────────────────────────────────────
+  build:
+    name: Validate Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./server
+
+      - name: Run tests (if configured)
+        run: npm run test --if-present
+        working-directory: ./server
+
+  # ── Deploy to Render via Deploy Hook ────────────────────────────────────────
+  # How to get RENDER_DEPLOY_HOOK_URL:
+  #   Render Dashboard → Your Web Service → Settings → Deploy Hook → Copy URL
+  # Add it as a GitHub secret: Settings → Secrets → Actions → New secret
+  #   Name:  RENDER_DEPLOY_HOOK_URL
+  #   Value: https://api.render.com/deploy/srv-xxxx?key=yyyy
+  #
+  # Render Monorepo config (set in Render Dashboard):
+  #   Root Directory: server
+  #   Build Command:  npm install
+  #   Start Command:  node src/server.js
+  deploy:
+    name: Deploy to Render
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    environment:
+      name: Production (Render)
+
+    steps:
+      - name: Trigger Render Deploy Hook
+        run: |
+          curl --silent --fail --show-error \
+            --output /dev/null \
+            --write-out "HTTP %{http_code}\n" \
+            "$RENDER_DEPLOY_HOOK_URL"
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+      - name: Output deploy status
+        run: echo "Deploy triggered. Monitor progress at https://dashboard.render.com"

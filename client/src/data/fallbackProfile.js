@@ -1,17 +1,17 @@
 const fallbackProfile = {
   name: 'Suman Mog Chowdhury',
   title: 'React.js Developer | Frontend Engineer | TypeScript | Next.js | AI Workflows',
-  location: 'Bengaluru, India (Open to relocate to Germany)',
+  location: 'Bengaluru, India',
   experience: '4+ years',
   phone: '+91 8413093319',
-  linkedin: 'https://www.linkedin.com/in/suman-mog-chowdhury',
+  linkedin: 'https://www.linkedin.com/in/suman-mog-chowdhury-8b52b5190/',
   summary:
     'Frontend Engineer with 4+ years of experience building scalable React.js and TypeScript applications for enterprise web platforms. Specialized in responsive UI engineering, reusable component architecture, frontend optimization, and API-driven application development.',
   email: 'sumanmogchowdhury1@gmail.com',
   socials: {
     github: 'https://github.com/your-github',
     gitlab: 'https://gitlab.com/your-gitlab',
-    linkedin: 'https://www.linkedin.com/in/suman-mog-chowdhury'
+    linkedin: 'https://www.linkedin.com/in/suman-mog-chowdhury-8b52b5190/'
   },
   currentFocus: {
     headline: 'Building AI-powered enterprise web products',
